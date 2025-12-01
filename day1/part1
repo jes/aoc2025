@@ -1,0 +1,29 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Data::Dumper;
+use List::Util qw(any all min max sum);
+
+my $dial = 50;
+my $zeroes = 0;
+
+while (<>) {
+    chomp;
+    $_ =~ /^(.)(\d+)$/;
+    my ($l, $n) = ($1, $2);
+    if ($l eq 'L') {
+        $dial -= $n;
+        $dial += 100 while $dial < 0;
+    } elsif ($l eq 'R') {
+        $dial += $n;
+    } else {
+    }
+    $dial = $dial % 100;
+    $zeroes++ if $dial == 0;
+}
+
+print "$zeroes\n";
+
+
