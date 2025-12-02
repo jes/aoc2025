@@ -1,0 +1,30 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use List::Util qw(any all min max sum);
+
+my $c = <>;
+chomp $c;
+
+my $sum = 0;
+
+for my $range (split /,/, $c) {
+    my ($first, $last) = split /-/, $range;
+    for my $i ($first .. $last) {
+        $sum += $i if bad($i);
+    }
+}
+
+print "$sum\n";
+
+sub bad {
+    my ($i) = @_;
+    for my $k (2..length($i)) {
+        next if length($i)%$k;
+        my $start = substr($i, 0, length($i)/$k);
+        return 1 if $i eq $start x $k;
+    }
+    return 0;
+}
