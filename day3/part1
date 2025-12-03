@@ -1,0 +1,25 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+my $sum = 0;
+
+while (<>) {
+    chomp;
+    my ($n,$m) = (0,0);
+    s/(.)$//;
+    my $last = $1;
+    for my $x (split //) {
+        if ($x > $n) {
+            $n = $x;
+            $m = 0;
+        } elsif ($x > $m) {
+            $m = $x;
+        }
+    }
+    $m = $last if $last > $m;
+    $sum += $n*10 + $m;
+}
+
+print "$sum\n";

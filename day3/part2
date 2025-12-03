@@ -1,0 +1,31 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+my $sum = 0;
+
+while (<>) {
+    chomp;
+    my @c = split //;
+    my @o;
+    while (@c > 12) {
+        my $drop;
+        for my $i (0 .. $#c-1) {
+            if ($c[$i+1] > $c[$i]) {
+                $drop = $i;
+                last;
+            }
+        }
+        if (defined $drop) {
+            splice @c, $drop, 1;
+        } else {
+            @c = @c[0..11];
+            last;
+        }
+    }
+    my $n = join("", @c);
+    $sum += $n;
+}
+
+print "$sum\n";
