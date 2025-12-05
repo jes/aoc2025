@@ -1,0 +1,58 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+my @ranges;
+
+while (<>) {
+    chomp;
+    last if !$_;
+    my ($start,$end) = split /-/;
+    addrange($start,$end);
+}
+
+my $len = 0;
+
+for my $r (@ranges) {
+    my ($a,$b) = @$r;
+    $len += $b-$a+1;
+}
+
+print "$len\n";
+
+sub rmrange {
+    my ($idx) = @_;
+    splice @ranges, $idx, 1;
+}
+
+sub addrange {
+    my ($a,$b) = @_;
+    for my $i (0..$#ranges) {
+        my ($ra,$rb) = @{ $ranges[$i] };
+        if ($a >= $ra && $b <= $rb) {
+            # completely within, ignore
+            return;
+        } elsif ($a < $ra && $b > $rb) {
+            # completely replaces
+            rmrange($i);
+            addrange($a,$b);
+            return;
+        } elsif ($a <= $ra && $b >= $ra && $b <= $rb) {
+            # joins at the start, replace $r with ($a,$rb)
+            rmrange($i);
+            addrange($a,$rb);
+            return;
+        } elsif ($a >= $ra && $a <= $rb && $b >= $rb) {
+            # joins at the end, replace $r with ($ra,$b)
+            rmrange($i);
+            addrange($ra,$b);
+            return;
+        } elsif ($b < $ra || $a > $rb) {
+            # no overlap
+        } else {
+            die "unhandled: ($a,$b) vs ($ra,$rb)\n";
+        }
+    }
+    push @ranges, [$a,$b];
+}

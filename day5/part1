@@ -1,0 +1,29 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+my @ranges;
+
+while (<>) {
+    chomp;
+    last if !$_;
+    my ($start,$end) = split /-/;
+    push @ranges, [$start,$end];
+}
+
+my $c = 0;
+
+while (<>) {
+    chomp;
+    my $n = $_;
+    for my $r (@ranges) {
+        my ($start,$end) = @$r;
+        if ($start <= $n && $n <= $end) {
+            $c++;
+            last;
+        }
+    }
+}
+
+print "$c\n";
