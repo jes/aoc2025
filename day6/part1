@@ -1,0 +1,32 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+my %grid;
+
+my $y = 0;
+
+while (<>) {
+    chomp;
+    s/^\s+//;
+    my (@nums) = split /\s+/;
+    if ($nums[0] =~ /\d/) {
+        $grid{$y} = [@nums];
+        $y++;
+    } else {
+        my @ops = @nums;
+        my $total = 0;
+        my $h = $y;
+        for my $x (0 .. $#ops) {
+            my $op = $ops[$x];
+            my $answer = ($op eq '*' ? 1 : 0);
+            for my $y (0 .. $h-1) {
+                $answer *= $grid{$y}[$x] if $op eq '*';
+                $answer += $grid{$y}[$x] if $op eq '+';
+            }
+            $total += $answer;
+        }
+        print "$total\n";
+    }
+}

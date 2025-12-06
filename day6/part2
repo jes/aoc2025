@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use List::Util qw(any all min max sum);
+
+my %grid;
+
+my $y = 0;
+
+my ($w,$h) = 0;
+
+while (<>) {
+    chomp;
+    $grid{$y} = [split //, $_];
+    $w = max($w, length($_));
+    $y++;
+    $h = $y;
+}
+
+my $total = 0;
+
+for (my $x = 0; $x < $w; $x++) {
+    my $op = $grid{$h-1}[$x];
+    next if $op eq ' ';
+    my @args = collect($x);
+    my $ans = ($op eq '*' ? 1 : 0);
+    for my $a (@args) {
+        $ans *= $a if $op eq '*';
+        $ans += $a if $op eq '+';
+    }
+    $total += $ans;
+}
+
+print "$total\n";
+
+sub collect {
+    my ($startx) = @_;
+    my $x = $startx;
+    my @out;
+    while (1) {
+        my $a = '';
+        for my $y (0 .. $h-2) {
+            $a .= $grid{$y}[$x]//' ';
+        }
+        return @out if $a =~ /^\s*$/;
+        $a =~ s/\s//g;
+        push @out, $a;
+        $x++;
+    }
+}
