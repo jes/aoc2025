@@ -1,0 +1,40 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+my %map;
+
+my $y = 0;
+my $h = 0;
+my $w = 0;
+while (<>) {
+    chomp;
+    $map{$y++} = [split //];
+    $w = length $_;
+    $h = $y;
+}
+
+my $startx = 0;
+$startx++ while $map{0}[$startx] ne 'S';
+
+my $splits = 0;
+my %visited;
+dfs($startx, 0);
+print "$splits\n";
+
+sub dfs {
+    no warnings 'recursion';
+    my ($x, $y) = @_;
+    return if $visited{"$x,$y"};
+    $visited{"$x,$y"} = 1;
+    if ($map{$y}[$x] eq '^') {
+        $splits++;
+        dfs($x-1,$y);
+        dfs($x+1,$y);
+    } elsif ($y == $h-1) {
+        return;
+    } else {
+        return dfs($x,$y+1);
+    }
+}
