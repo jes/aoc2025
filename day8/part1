@@ -1,0 +1,72 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+my @boxes;
+my %connected;
+my %neighbours;
+
+while (<>) {
+    chomp;
+    push @boxes, [split /,/];
+}
+
+my %dist;
+my @pairs;
+
+# should make array of all pairs and then sort by distance instead of this
+for my $i (0..$#boxes-1) {
+    for my $j ($i+1..$#boxes) {
+        next if $connected{"$i,$j"};
+        my $d = dist($i,$j);
+        push @pairs, {
+            i => $i,
+            j => $j,
+            d => $d,
+        }
+    }
+}
+
+@pairs = sort { $a->{d} <=> $b->{d} } @pairs;
+
+for my $p (@pairs[0..999]) {
+    my ($i, $j) = ($p->{i}, $p->{j});
+    $connected{"$i,$j"} = 1;
+    $connected{"$j,$i"} = 1;
+    push @{ $neighbours{$i} }, $j;
+    push @{ $neighbours{$j} }, $i;
+}
+
+my @sizes;
+
+my %visited;
+for my $i (0 .. $#boxes) {
+    next if $visited{$i};
+    my $s = dfs($i, \%visited);
+    push @sizes, $s;
+}
+
+my @s = sort { $b <=> $a } @sizes;
+print $s[0] * $s[1] * $s[2], "\n";
+
+sub dist {
+    my ($i, $j) = @_;
+    my $a = $boxes[$i];
+    my $b = $boxes[$j];
+    my $dx = $a->[0]-$b->[0];
+    my $dy = $a->[1]-$b->[1];
+    my $dz = $a->[2]-$b->[2];
+    return sqrt($dx*$dx + $dy*$dy + $dz*$dz);
+}
+
+sub dfs {
+    my ($i, $visited) = @_;
+    return 0 if $visited->{$i};
+    $visited->{$i} = 1;
+    my $count = 1;
+    for my $n (@{ $neighbours{$i}||[] }) {
+        $count += dfs($n, $visited);
+    }
+    return $count;
+}

@@ -1,0 +1,73 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+my @boxes;
+my %connected;
+my %neighbours;
+
+while (<>) {
+    chomp;
+    push @boxes, [split /,/];
+}
+
+my %dist;
+my @pairs;
+
+# should make array of all pairs and then sort by distance instead of this
+for my $i (0..$#boxes-1) {
+    for my $j ($i+1..$#boxes) {
+        next if $connected{"$i,$j"};
+        my $d = dist($i,$j);
+        push @pairs, {
+            i => $i,
+            j => $j,
+            d => $d,
+        }
+    }
+}
+
+@pairs = sort { $a->{d} <=> $b->{d} } @pairs;
+
+my $answer;
+
+while (!single_component()) {
+    my $p = shift @pairs;
+    my ($i, $j) = ($p->{i}, $p->{j});
+    $connected{"$i,$j"} = 1;
+    $connected{"$j,$i"} = 1;
+    push @{ $neighbours{$i} }, $j;
+    push @{ $neighbours{$j} }, $i;
+    my $a = $boxes[$i];
+    my $b = $boxes[$j];
+    $answer = $a->[0]*$b->[0];
+}
+
+print "$answer\n";
+
+sub dist {
+    my ($i, $j) = @_;
+    my $a = $boxes[$i];
+    my $b = $boxes[$j];
+    my $dx = $a->[0]-$b->[0];
+    my $dy = $a->[1]-$b->[1];
+    my $dz = $a->[2]-$b->[2];
+    return sqrt($dx*$dx + $dy*$dy + $dz*$dz);
+}
+
+sub single_component {
+    my %visited;
+    dfs(0, \%visited);
+    return keys %visited == @boxes;
+}
+
+sub dfs {
+    no warnings 'recursion';
+    my ($i, $visited) = @_;
+    return 0 if $visited->{$i};
+    $visited->{$i} = 1;
+    for my $n (@{ $neighbours{$i}||[] }) {
+        dfs($n, $visited);
+    }
+}
