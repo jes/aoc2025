@@ -15,15 +15,12 @@ while (<>) {
 my %dist;
 my @pairs;
 
-# should make array of all pairs and then sort by distance instead of this
 for my $i (0..$#boxes-1) {
     for my $j ($i+1..$#boxes) {
-        next if $connected{"$i,$j"};
-        my $d = dist($i,$j);
         push @pairs, {
             i => $i,
             j => $j,
-            d => $d,
+            d => dist($i,$j),
         }
     }
 }
