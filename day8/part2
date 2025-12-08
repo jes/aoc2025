@@ -28,6 +28,8 @@ for my $i (0..$#boxes-1) {
 
 my $answer;
 
+# welcome to today's episode of "tell me you don't know union-find without telling me you don't know union-find"
+
 while (!single_component()) {
     my $p = shift @pairs;
     my ($i, $j) = ($p->{i}, $p->{j});
