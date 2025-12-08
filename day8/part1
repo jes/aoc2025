@@ -12,7 +12,6 @@ while (<>) {
     push @boxes, [split /,/];
 }
 
-my %dist;
 my @pairs;
 
 for my $i (0..$#boxes-1) {
