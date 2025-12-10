@@ -1,0 +1,31 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+my @points;
+
+while (<>) {
+    chomp;
+    push @points, [split /,/];
+}
+
+my $max = 0;
+
+for my $a (0 .. $#points-1) {
+    for my $b ($a+1 .. $#points) {
+        my $area = area($a,$b);
+        $max = $area if $area > $max;
+    }
+}
+
+print "$max\n";
+
+sub area {
+    my ($i, $j) = @_;
+    my $ix = $points[$i][0];
+    my $iy = $points[$i][1];
+    my $jx = $points[$j][0];
+    my $jy = $points[$j][1];
+    return (abs($jx-$ix)+1) * (abs($jy-$iy)+1);
+}

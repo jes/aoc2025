@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+my @machines;
+
+while (<>) {
+    chomp;
+    my $target = 0;
+    my $bits;
+    if (s/^\[([.#]+)\]\s+//) {
+        $bits = length($1);
+        $target = $target*2 + ($_ eq '#') for split //, $1;
+    } else {
+        die "$_\n";
+    }
+
+    my @buttons;
+
+    while (s/^\(([0-9,]+)\)\s+//) {
+        my $value = 0;
+        for my $bit (split /,/, $1) {
+            $value += 1 << ($bits-$bit-1);
+        }
+        push @buttons, $value;
+    }
+
+    push @machines, {
+        bits => $bits,
+        target => $target,
+        buttons => \@buttons,
+    }
+}
+
+my $ans = 0;
+
+for my $m (@machines) {
+    $ans += solve($m, 0, 0, 0);
+}
+
+print "$ans\n";
+
+sub solve {
+    my ($m, $i, $p, $v) = @_;
+    return $p if $v == $m->{target};
+    return 10000 if $i >= @{ $m->{buttons} };
+    my $v1 = $v ^ $m->{buttons}[$i];
+    my $a = solve($m, $i+1, $p, $v);
+    my $b = solve($m, $i+1, $p+1, $v1);
+    return $a < $b ? $a : $b;
+}
