@@ -15,9 +15,7 @@ while (<>) {
 
 my %paths;
 
-route('you');
-
-print "$paths{you}\n";
+print route('you'), "\n";
 
 sub route {
     my ($from) = @_;

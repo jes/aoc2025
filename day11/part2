@@ -15,16 +15,7 @@ while (<>) {
 
 my %paths;
 
-route('svr','fft');
-route('svr','dac');
-route('fft','dac');
-route('dac','fft');
-route('dac','out');
-route('fft','out');
-
-my $paths = ($paths{'svr,fft'} * $paths{'fft,dac'} * $paths{'dac,out'}) || ($paths{'svr,dac'} * $paths{'dac,fft'} * $paths{'fft,out'});
-
-print "$paths\n";
+print "".(route(svr => 'fft') * route(fft => 'dac') * route(dac => 'out') || route(svr => 'dac') * route(dac => 'fft') * route(fft => 'out')), "\n";
 
 sub route {
     my ($from, $to) = @_;
