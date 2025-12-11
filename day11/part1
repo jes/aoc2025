@@ -1,0 +1,29 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use List::Util qw(sum);
+
+my %conn;
+
+while (<>) {
+    chomp;
+    my ($from, @to) = split /:? /;
+    $conn{$from} = \@to;
+}
+
+my %paths;
+
+route('you');
+
+print "$paths{you}\n";
+
+sub route {
+    my ($from) = @_;
+    return 1 if $from eq 'out';
+    if (!defined $paths{$from}) {
+        $paths{$from} = sum map { route($_) } @{ $conn{$from} };
+    }
+    return $paths{$from};
+}

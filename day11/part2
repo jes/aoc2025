@@ -1,0 +1,36 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use List::Util qw(sum);
+
+my %conn;
+
+while (<>) {
+    chomp;
+    my ($from, @to) = split /:? /;
+    $conn{$from} = \@to;
+}
+
+my %paths;
+
+route('svr','fft');
+route('svr','dac');
+route('fft','dac');
+route('dac','fft');
+route('dac','out');
+route('fft','out');
+
+my $paths = ($paths{'svr,fft'} * $paths{'fft,dac'} * $paths{'dac,out'}) || ($paths{'svr,dac'} * $paths{'dac,fft'} * $paths{'fft,out'});
+
+print "$paths\n";
+
+sub route {
+    my ($from, $to) = @_;
+    return 1 if $from eq $to;
+    if (!defined $paths{"$from,$to"}) {
+        $paths{"$from,$to"} = sum map { route($_,$to) } @{ $conn{$from} };
+    }
+    return $paths{"$from,$to"};
+}
